@@ -5,8 +5,11 @@ from wtforms import Form, TextField, validators, StringField, SubmitField
 from flask import session, flash, request, redirect, abort
 from sqlalchemy.orm import sessionmaker
 import os
+from tabledef import *
 
 app = Flask(__name__)
+
+engine = create_engine('sqlite:///todo.db', echo=True)
 
 class UserForm(Form):
     username = StringField('Username', validators=[validators.required()])
@@ -45,5 +48,9 @@ def signup():
 
     return render_template('signup.html', form=form)
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = Userform(request.form)
+    return render_template('login.html', form=form)
 
 app.secret_key = os.urandom(12)

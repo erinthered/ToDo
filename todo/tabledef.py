@@ -18,4 +18,4 @@ class User(Base):
     def __init__(self, username):
         self.username = username
 
-Base.metadata.creat_all(engine)
+Base.metadata.create_all(engine)
