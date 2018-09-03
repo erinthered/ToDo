@@ -51,6 +51,32 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = Userform(request.form)
+
+    if request.method == 'POST':
+        username = request.form['username']
+
+        if form.validate():
+            Session = sessionmaker(bind=engine)
+            s = Session()
+            query = s.query(User).filter(User.username.in_([username]))
+            result = query.first()
+
+            if result:
+                session['logged_in'] = True
+                session['user_id'] = result.id
+                session['username'] = username
+                flash('Welcome back, ' + session.get('username') + '!')
+            else:
+                flash('Username not valid. Please create an account or try again.')
+        else:
+            flash('Error: Username required for login.')
     return render_template('login.html', form=form)
+
+@app.route('/logout')
+def logout():
+    session['logged_in'] = False
+    session['user_id'] = 0
+    session['username'] = 'Guest'
+    return redirect('/login')
 
 app.secret_key = os.urandom(12)

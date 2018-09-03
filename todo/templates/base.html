@@ -5,7 +5,14 @@
   <body>
     <div>
       To-Do List:
-      <a href={{ 'index' }}>Home</a>
+      <a href={{ "/" }}>Home</a>
+      {% if session['logged_in'] %}
+        <a href="/logout">Logout</a>
+        Hello, {{ session['username'] }}
+      {% else %}
+        <a href="/signup">Sign Up</a>
+        <a href="/login">Login</a>
+      {% endif %}
     </div>
     {% block content %}{% endblock %}
   </body>

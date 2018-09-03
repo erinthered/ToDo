@@ -7,4 +7,14 @@
     <input type="username" name="username" placeholder="Username"><br><br>
     <input type="submit" value="Lgoin">
   </form>
+
+  {% with messages = get_flashed_messages(with_categories = true) %}
+    {% if messages %}
+      <ul>
+        {% for message in messages %}
+          <li> {{ message[1] }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
 {% endblock %}
