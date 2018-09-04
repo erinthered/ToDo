@@ -14,11 +14,12 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     username = Column(String(50))
+    todos = relationship('Todo', backref='user', lazy='dynamic')
 
     def __init__(self, username):
         self.username = username
 
-class ToDo(Base):
+class Todo(Base):
     __tablename__ = "todos"
 
     id = Column(Integer, primary_key=True)
