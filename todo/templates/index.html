@@ -1,5 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <p>Hello, World!</p>
+  <h1>To-Do List<h1>
+
+    {% if session['logged_in'] %}
+      <ul>
+        {% for todo in list %}
+          <li>
+            {{ todo[1] }}
+          </li>
+        {% endfor %}
+      </ul>
+
+      <form action="" method="post" role="form">
+        <input type="text" name="todo" placeholder="New Item"><br><br>
+        <input type="submit" value="add">
+      </form>
+    {% else %}
+      <p>
+        Welcome to the To-Do List Web App.<br><br>
+        If you are a new user, you can sign up
+        <u><a href="/signup">here</a></u>.<br>
+        If you already have an account, login
+        <u><a href="/login">here</a></u>.<br><br>
+        May you complete many tasks!
+      </p>
+    {% endif %}
 {% endblock %}

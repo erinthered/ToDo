@@ -22,10 +22,31 @@ class UserForm(Form):
         self.process(blankData)
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    todos = []
+
+    if session.get('logged_in'):
+        Session = sessionmaker(bind=engine)
+        s = Session()
+
+        current_user = s.query(User).get(session['user_id'])
+
+        if request.method == 'POST':
+            new_todo = request.form['todo']
+            #if todo not empty
+            if new_todo != '':
+                todo = Todo(content=new_todo, user=current_user)
+                s.add(todo)
+                s.commit()
+
+        user_todos = current_user.todos.all()
+
+        for todo in user_todos:
+            todos.append([todo.id, todo.content])
+
+    return render_template('index.html', list=todos)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
