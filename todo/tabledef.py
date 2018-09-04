@@ -25,5 +25,7 @@ class Todo(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
     content = Column(String)
+    completed = Column(Integer)
 
 Base.metadata.create_all(engine)
+#Base.metadata.drop_all(engine)

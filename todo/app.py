@@ -37,14 +37,14 @@ def index():
             new_todo = request.form['todo']
             #if todo not empty
             if new_todo != '':
-                todo = Todo(content=new_todo, user=current_user)
+                todo = Todo(content=new_todo, user=current_user, completed=0)
                 s.add(todo)
                 s.commit()
 
         user_todos = current_user.todos.all()
 
         for todo in user_todos:
-            todos.append([todo.id, todo.content])
+            todos.append([todo.id, todo.content, todo.completed])
 
     return render_template('index.html', list=todos)
 
@@ -89,6 +89,7 @@ def login():
                 session['user_id'] = result.id
                 session['username'] = username
                 flash('Welcome back, ' + session.get('username') + '!')
+                return redirect('/index')
             else:
                 flash('Username not valid. Please create an account or try again.')
         else:
