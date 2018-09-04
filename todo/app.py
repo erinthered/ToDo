@@ -3,12 +3,14 @@ from flask import render_template
 from wtforms import Form, TextField, validators, StringField, SubmitField
 # Used by Userform.signup
 from flask import session, flash, request, redirect, abort
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import os
 from tabledef import *
 
 app = Flask(__name__)
 
+# An engine that the SQLAlchemy Session will use for DB connection
 engine = create_engine('sqlite:///todo.db', echo=True)
 
 class UserForm(Form):
@@ -33,14 +35,14 @@ def signup():
         # Get username from form
         username = request.form['username']
         if form.validate():
-            # Start DB session
+            # Start session
             Session = sessionmaker(bind=engine)
             s = Session()
             # Add user to table
             user = User(username)
             s.add(user)
             # Commit changes to DB
-            s.commit
+            s.commit()
 
             flash('Hello ' + username + '! You are now registered!')
     else:
@@ -50,7 +52,7 @@ def signup():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = Userform(request.form)
+    form = UserForm(request.form)
 
     if request.method == 'POST':
         username = request.form['username']

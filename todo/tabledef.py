@@ -18,4 +18,11 @@ class User(Base):
     def __init__(self, username):
         self.username = username
 
+class ToDo(Base):
+    __tablename__ = "todos"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    content = Column(String)
+
 Base.metadata.create_all(engine)
