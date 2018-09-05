@@ -3,21 +3,31 @@
 {% block content %}
   <h1>To-Do List<h1>
 
+    <div>
     {% if session['logged_in'] %}
       <ul>
         {% for todo in list %}
           <li>
-            {{ todo[1] }}
+            {% if todo[2] == 1 %}
+              <strike>{{ todo[1] }}</strike>
+              [<a href={{'/uncomplete?id=' + todo[0]|string}}>Mark Uncomplete</a>]
+              [<a href={{'/delete?id=' + todo[0]|string}}>Delete Item</a>]
+            {% else %}
+              {{ todo[1] }}
+              [<a href={{'/complete?id=' + todo[0]|string}}>Mark Complete</a>]
+              [<a href={{'/delete?id=' + todo[0]|string}}>Delete Item</a>]
+            {% endif %}
           </li>
+        </ul>
         {% endfor %}
-      </ul>
+      </div>
 
       <form action="" method="post" role="form">
-        <input type="text" name="todo" placeholder="New Item"><br><br>
-        <input type="submit" value="add">
+        <input type="text" name="todo" placeholder="New Item">
+        <br><input type="submit" value="Add Item">
       </form>
     {% else %}
-      <p>
+      <p size=16>
         Welcome to the To-Do List Web App.<br><br>
         If you are a new user, you can sign up
         <u><a href="/signup">here</a></u>.<br>

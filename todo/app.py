@@ -1,14 +1,14 @@
-from flask import Flask
+#from flask import Flask
 from flask import render_template
-from wtforms import Form, TextField, validators, StringField, SubmitField
+from wtforms import Form, TextField, validators, StringField, SubmitField, BooleanField
 # Used by Userform.signup
 from flask import session, flash, request, redirect, abort
-from sqlalchemy import create_engine
+#from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import os
 from tabledef import *
 
-app = Flask(__name__)
+#app = Flask(__name__)
 
 # An engine that the SQLAlchemy Session will use for DB connection
 engine = create_engine('sqlite:///todo.db', echo=True)
@@ -102,5 +102,42 @@ def logout():
     session['user_id'] = 0
     session['username'] = 'Guest'
     return redirect('/login')
+
+@app.route('/complete')
+def complete():
+    if session.get('logged_in'):
+        Session = sessionmaker(bind=engine)
+        s = Session()
+
+        todo_id = int(request.args.get('id'))
+        todo = s.query(Todo).get(todo_id)
+        todo.completed = 1
+        s.commit()
+    return redirect('/')
+
+@app.route('/uncomplete')
+def uncomplete():
+    if session.get('logged_in'):
+        Session = sessionmaker(bind=engine)
+        s = Session()
+
+        todo_id = int(request.args.get('id'))
+        todo = s.query(Todo).get(todo_id)
+        todo.completed = 0
+        s.commit()
+    return redirect('/')
+
+@app.route('/delete')
+def delete():
+    if session.get('logged_in'):
+        Session = sessionmaker(bind=engine)
+        s = Session()
+
+        todo_id = int(request.args.get('id'))
+        todo = s.query(Todo).get(todo_id)
+        s.delete(todo)
+        s.commit()
+    return redirect('/')
+
 
 app.secret_key = os.urandom(12)
