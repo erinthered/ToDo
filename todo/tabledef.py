@@ -9,6 +9,7 @@ engine = create_engine('sqlite:///todo.db', echo=True)
 # Base class
 Base = declarative_base()
 
+# Define User Table
 class User(Base):
     __tablename__ = "users"
 
@@ -19,6 +20,7 @@ class User(Base):
     def __init__(self, username):
         self.username = username
 
+# Define ToDo Table
 class Todo(Base):
     __tablename__ = "todos"
 
@@ -28,4 +30,3 @@ class Todo(Base):
     completed = Column(Integer)
 
 Base.metadata.create_all(engine)
-#Base.metadata.drop_all(engine)

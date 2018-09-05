@@ -1,14 +1,14 @@
-#from flask import Flask
-from flask import render_template
+from flask import Flask
+from flask import render_template, url_for
 from wtforms import Form, TextField, validators, StringField, SubmitField, BooleanField
 # Used by Userform.signup
 from flask import session, flash, request, redirect, abort
-#from sqlalchemy import create_engine
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import os
 from tabledef import *
 
-#app = Flask(__name__)
+app = Flask(__name__)
 
 # An engine that the SQLAlchemy Session will use for DB connection
 engine = create_engine('sqlite:///todo.db', echo=True)
@@ -59,15 +59,23 @@ def signup():
             # Start session
             Session = sessionmaker(bind=engine)
             s = Session()
-            # Add user to table
-            user = User(username)
-            s.add(user)
-            # Commit changes to DB
-            s.commit()
 
-            flash('Hello ' + username + '! You are now registered!')
-    else:
-        flash('Error: Username Required.')
+            query = s.query(User).filter(User.username.in_([username]))
+            result = query.first()
+
+            if result:
+                flash('Username already exists, please log in.')
+                return redirect(url_for('login'))
+            else:
+                # Add user to table
+                user = User(username)
+                s.add(user)
+                # Commit changes to DB
+                s.commit()
+
+                flash('Hello ' + username + '! You are now registered!')
+        else:
+            flash('Error: Username Required.')
 
     return render_template('signup.html', form=form)
 
@@ -89,7 +97,7 @@ def login():
                 session['user_id'] = result.id
                 session['username'] = username
                 flash('Welcome back, ' + session.get('username') + '!')
-                return redirect('/index')
+                return redirect(url_for('index'))
             else:
                 flash('Username not valid. Please create an account or try again.')
         else:
@@ -101,7 +109,7 @@ def logout():
     session['logged_in'] = False
     session['user_id'] = 0
     session['username'] = 'Guest'
-    return redirect('/login')
+    return redirect(url_for('login'))
 
 @app.route('/complete')
 def complete():
@@ -113,7 +121,7 @@ def complete():
         todo = s.query(Todo).get(todo_id)
         todo.completed = 1
         s.commit()
-    return redirect('/')
+    return redirect(url_for('index'))
 
 @app.route('/uncomplete')
 def uncomplete():
@@ -125,7 +133,7 @@ def uncomplete():
         todo = s.query(Todo).get(todo_id)
         todo.completed = 0
         s.commit()
-    return redirect('/')
+    return redirect(url_for('index'))
 
 @app.route('/delete')
 def delete():
@@ -137,7 +145,8 @@ def delete():
         todo = s.query(Todo).get(todo_id)
         s.delete(todo)
         s.commit()
-    return redirect('/')
+    return redirect(url_for('index'))
 
 
 app.secret_key = os.urandom(12)
+app.run(host='0.0.0.0')
