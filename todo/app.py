@@ -65,15 +65,14 @@ def signup():
 
             if result:
                 flash('Username already exists, please log in.')
-                return redirect(url_for('login'))
             else:
                 # Add user to table
                 user = User(username)
                 s.add(user)
                 # Commit changes to DB
                 s.commit()
-
-                flash('Hello ' + username + '! You are now registered!')
+                flash('Hello ' + username + '! You are now registered, please log in to continue.')
+            return redirect(url_for('login'))
         else:
             flash('Error: Username Required.')
 
