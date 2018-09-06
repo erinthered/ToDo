@@ -1,10 +1,6 @@
-configobj==5.0.6
-configparser==3.5.0
-decorator==4.0.11
 Flask==0.12.3
 Flask-SQLAlchemy==2.3.2
 Flask-WTF==0.14.2
 Jinja2==2.9.4
-requests==2.13.0
 SQLAlchemy==1.1.5
 WTForms==2.2.1
